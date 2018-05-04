@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -66,6 +67,8 @@ public class DisplayThiSinh extends JFrame{
 	Connection conn=null;
 	Statement stmt=null;
 	ResultSet rs=null;
+	Boolean ClickThem = true;
+	
 	
 	public DisplayThiSinh()
 	{
@@ -211,9 +214,109 @@ public class DisplayThiSinh extends JFrame{
 
         });
 		
+		huy.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				huyActionPerformed(e);
+			}
+        });
+		
+		luu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					luuActionPerformed(e);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					
+					e1.printStackTrace();
+				}
+			}
+        });
+		
 		setVisible(true);
 	}
+	
+	public void DieuKienBinhThuong()
+	{
+		sobaodanh.requestFocus();
 		
+		them.setEnabled(true);
+		sua.setEnabled(false);
+		xoa.setEnabled(false);
+		luu.setEnabled(false);
+		huy.setEnabled(false);
+		
+		sobaodanh.setEditable(false);
+		hoten.setEditable(false);
+		dienthoai.setEditable(false);
+		diemLT.setEditable(false);
+		diemTH.setEditable(false);
+		
+		sobaodanh.setText("");
+		hoten.setText("");
+		dienthoai.setText("");
+		diemLT.setText("");
+		diemTH.setText("");
+	}
+	
+	public void DieuKienKhiThem()
+	{
+		sobaodanh.setEditable(true);
+		hoten.setEditable(true);
+		dienthoai.setEditable(true);
+		diemLT.setEditable(true);
+		diemTH.setEditable(true);
+		
+		them.setEnabled(false);
+		luu.setEnabled(true);
+		huy.setEnabled(true);
+		sua.setEnabled(false);
+		xoa.setEnabled(false);
+		
+		sobaodanh.requestFocus();
+		
+		sobaodanh.setText("");
+		hoten.setText("");
+		dienthoai.setText("");
+		diemLT.setText("");
+		diemTH.setText("");
+		
+		ClickThem = true;
+	}
+	
+	
+	public void DieuKienKhiSua()
+	{
+		sobaodanh.setEditable(false);
+		hoten.setEditable(true);
+		dienthoai.setEditable(true);
+		diemLT.setEditable(true);
+		diemTH.setEditable(true);
+		
+		sobaodanh.requestFocus();
+		
+		luu.setEnabled(true);
+		huy.setEnabled(true);
+		them.setEnabled(false);
+		sua.setEnabled(false);
+		xoa.setEnabled(false);
+		ClickThem = false;
+	}
+	
+	public void DieuKienKhiClick()
+	{
+		xoa.setEnabled(true);
+		them.setEnabled(true);
+		sua.setEnabled(true);
+		luu.setEnabled(false);
+		huy.setEnabled(false);
+		
+		sobaodanh.setEditable(false);
+		
+		ClickThem = false;
+	}
+	
 	public void executeSQLQuery(String sql, String message) throws ClassNotFoundException, SQLException
 	{
 		Connection con = MySQLConnUtils.getMySQLConnection();
@@ -224,17 +327,17 @@ public class DisplayThiSinh extends JFrame{
 			
 			if(st.executeUpdate(sql) == 1)
 			{
-				JOptionPane.showMessageDialog(null, "Data " + message + " Succefully");
+				JOptionPane.showMessageDialog(null, "Du lieu da duoc " + message + " thanh cong");
 				showData();
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(null, "Data not " + message + " Succefully");
+				JOptionPane.showMessageDialog(null, "Du lieu " + message + " khong thanh cong");
 			}
 		}catch(Exception e)
 		{
-			System.out.println("1");
-			e.printStackTrace();
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Du lieu khong hop le, xin vui long nhap lai");
 		}
 	}
 	
@@ -248,30 +351,79 @@ public class DisplayThiSinh extends JFrame{
 		diemLT.setText(model.getValueAt(i, 3).toString());
 		diemTH.setText(model.getValueAt(i, 4).toString());
 		
-		sobaodanh.setEditable(false);
+		
+		DieuKienKhiClick();
     }   
 	
 	
-	private void themActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
+	private void luuActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException 
 	{
-		sobaodanh.setEditable(true);
-		sobaodanh.requestFocus();
+		if (sobaodanh.getText().equals("")) 
+		{
+			JOptionPane.showMessageDialog(null, "So bao danh khong duoc bo trong");
+			sobaodanh.requestFocus();
+		} 
+		else if (hoten.getText().equals("")) 
+		{
+			JOptionPane.showMessageDialog(null, "Ho ten khong duoc bo trong");
+			hoten.requestFocus();
+		} 
+		else if (dienthoai.getText().equals("")) 
+		{
+			JOptionPane.showMessageDialog(null, "Dien Thoai khong duoc bo trong");
+			dienthoai.requestFocus();
+		} 
+		else if (diemLT.getText().equals("")) 
+		{
+			JOptionPane.showMessageDialog(null, "Diem ly thuyet khong duoc bo trong");
+			diemLT.requestFocus();
+		} 
+		else if (diemTH.getText().equals("")) 
+		{
+			JOptionPane.showMessageDialog(null, "Diem thuc hanh khong duoc bo trong");
+			diemTH.requestFocus();
+		} 
+		else {
+			if (ClickThem) 
+			{
+				if (KTKC(sobaodanh.getText())) 
+				{
+					
+					JOptionPane.showMessageDialog(null, "So bao danh da ton tai, xin vui long nhap lai");
+					sobaodanh.requestFocus();
+				} 
+				else 
+				{
+					String sql = "INSERT INTO thisinh(soBaoDanh, hoTen, dienThoai, diemLyThuyet, diemThucHanh) VALUES ('"
+							+ sobaodanh.getText() + "','" + hoten.getText() + "','" + dienthoai.getText() + "','"
+							+ diemLT.getText() + "','" + diemTH.getText() + "')";
+					executeSQLQuery(sql, "luu");
+					DieuKienBinhThuong();
+				}
+			} 
+			else
+			{
+				String sql = "UPDATE `thisinh` SET `hoTen`='" + hoten.getText() + "',`dienThoai`='"
+						+ dienthoai.getText() + "',`diemLyThuyet`='" + diemLT.getText() + "',`diemThucHanh`="
+						+ diemTH.getText() + " WHERE `soBaoDanh` = '" + sobaodanh.getText() + "'";
+				executeSQLQuery(sql, "chinh sua");
+			}
+		}
 		
-		String sql = "INSERT INTO thisinh(soBaoDanh, hoTen, dienThoai, diemLyThuyet, diemThucHanh) VALUES ('"+sobaodanh.getText()+"','"+hoten.getText()+"','"+dienthoai.getText()+"','"+diemLT.getText()+"','"+diemTH.getText()+"')";
-		executeSQLQuery(sql,"Inserted");
-		
-		sobaodanh.setText("");
-		hoten.setText("");
-		dienthoai.setText("");
-		diemLT.setText("");
-		diemTH.setText("");
+	}
+
+	private void huyActionPerformed(ActionEvent e) {
+		DieuKienBinhThuong();
+	}
+	
+	private void themActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
+	{	
+		DieuKienKhiThem();
 	}	
 	
 	private void suaActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
 	{
-		
-		String sql = "UPDATE `thisinh` SET `hoTen`='"+hoten.getText()+"',`dienThoai`='"+dienthoai.getText()+"',`diemLyThuyet`='"+diemLT.getText()+"',`diemThucHanh`="+diemTH.getText()+" WHERE `soBaoDanh` = '"+sobaodanh.getText()+"'";
-		executeSQLQuery(sql,"Updated");
+		DieuKienKhiSua();
 	}
 	
 
@@ -279,7 +431,25 @@ public class DisplayThiSinh extends JFrame{
 	{
 		
 		String sql = "DELETE FROM thisinh WHERE soBaoDanh= '"+ sobaodanh.getText()+"'"; 
-		executeSQLQuery(sql,"Deleted");
+		executeSQLQuery(sql,"xoa");
+	}
+	
+	public boolean KTKC(String a) throws ClassNotFoundException, SQLException
+	{
+		boolean check = false;
+		
+		Connection con = MySQLConnUtils.getMySQLConnection();
+		Statement st;
+		try{
+	        PreparedStatement ps = con.prepareCall("select * from thisinh where soBaoDanh='"+sobaodanh.getText()+"'");
+	        ResultSet rs = ps.executeQuery();
+	        check=rs.next();
+	        
+	    }catch(Exception ex){
+	    	System.out.println(ex.toString());
+	    }
+		
+		return check;
 	}
 	
 	//Load du lieu len JTable
@@ -334,6 +504,8 @@ public class DisplayThiSinh extends JFrame{
 				ex.printStackTrace();
 			}
 		}
+		
+		DieuKienBinhThuong();
 		
 	}
 	
