@@ -184,7 +184,32 @@ public class DisplayThiSinh extends JFrame{
 			}
         });
 		
+		sua.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					suaActionPerformed(e);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					
+					e1.printStackTrace();
+				}
+			}
+        });
 		
+		xoa.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					xoaActionPerformed(e);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					
+					e1.printStackTrace();
+				}
+			}
+
+        });
 		
 		setVisible(true);
 	}
@@ -222,24 +247,40 @@ public class DisplayThiSinh extends JFrame{
 		dienthoai.setText(model.getValueAt(i, 2).toString());
 		diemLT.setText(model.getValueAt(i, 3).toString());
 		diemTH.setText(model.getValueAt(i, 4).toString());
+		
+		sobaodanh.setEditable(false);
     }   
-	
 	
 	
 	private void themActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
 	{
+		sobaodanh.setEditable(true);
+		sobaodanh.requestFocus();
+		
+		String sql = "INSERT INTO thisinh(soBaoDanh, hoTen, dienThoai, diemLyThuyet, diemThucHanh) VALUES ('"+sobaodanh.getText()+"','"+hoten.getText()+"','"+dienthoai.getText()+"','"+diemLT.getText()+"','"+diemTH.getText()+"')";
+		executeSQLQuery(sql,"Inserted");
+		
 		sobaodanh.setText("");
 		hoten.setText("");
 		dienthoai.setText("");
 		diemLT.setText("");
 		diemTH.setText("");
-		
-		sobaodanh.requestFocus();
-		
-		String sql = "INSERT INTO thisinh(soBaoDanh, hoTen, dienThoai, diemLyThuyet, diemThucHanh) VALUES ('"+sobaodanh.getText()+"',"
-				+ "'"+hoten.getText()+"','"+dienthoai.getText()+"','"+diemLT.getText()+"','"+diemTH.getText()+"')";
-		executeSQLQuery(sql,"Inserted");
 	}	
+	
+	private void suaActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
+	{
+		
+		String sql = "UPDATE `thisinh` SET `hoTen`='"+hoten.getText()+"',`dienThoai`='"+dienthoai.getText()+"',`diemLyThuyet`='"+diemLT.getText()+"',`diemThucHanh`="+diemTH.getText()+" WHERE `soBaoDanh` = '"+sobaodanh.getText()+"'";
+		executeSQLQuery(sql,"Updated");
+	}
+	
+
+	private void xoaActionPerformed(ActionEvent e) throws ClassNotFoundException, SQLException
+	{
+		
+		String sql = "DELETE FROM thisinh WHERE soBaoDanh= '"+ sobaodanh.getText()+"'"; 
+		executeSQLQuery(sql,"Deleted");
+	}
 	
 	//Load du lieu len JTable
 	public void showData() 
@@ -248,7 +289,7 @@ public class DisplayThiSinh extends JFrame{
 			 conn = ConnectionUtils.getMyConnection();
 			 tblModel = new DefaultTableModel(header, 0);
 			 
-		      // tao doi tuong Statement.
+		      // tao doi tuong Statement
 		      stmt = conn.createStatement();
 
 			 String sql = "select * from thisinh";

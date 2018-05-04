@@ -11,9 +11,9 @@ public class MySQLConnUtils {
 	         ClassNotFoundException {
 	     String hostName = "localhost";
 	 
-	     String connectionURL = "thisinh123";
-	     String userName = "WebNet";
-	     String password = "webnetwebnet";
+	     String connectionURL = "student";
+	     String userName = "root";
+	     String password = "12345";
 	 
 	     return getMySQLConnection(hostName, connectionURL, userName, password);
 	 }
@@ -22,14 +22,14 @@ public class MySQLConnUtils {
 	         String userName, String password) throws SQLException,
 	         ClassNotFoundException {
 
-	     //Class.forName("com.mysql.jdbc.Driver");
+	     Class.forName("com.mysql.jdbc.Driver");
 	 
-		 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	     //String connectionURL = "jdbc:mysql://" + hostName + "/" + dbName;
+		 //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	     String connectionURL = "jdbc:mysql://" + hostName + "/" + dbName;
 	 
-	     //Connection conn = DriverManager.getConnection(connectionURL, userName,password);
+	     Connection conn = DriverManager.getConnection(connectionURL, userName,password);
 	     
-	     Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;Database="+ dbName+ ";UserName="+userName+";Password="+password+"");
+	    // Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;Database="+ dbName+ ";UserName="+userName+";Password="+password+"");
 	     return conn;
 	 }
 	}
